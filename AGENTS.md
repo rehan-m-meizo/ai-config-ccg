@@ -3,7 +3,7 @@
 For Claude Code, Codex and Gemini. Repo facts: each repo's `AGENTS.md`. Procedures: skills. `WORKFLOW/` and `GUARDRAILS/` are optional long-form; this file wins.
 
 ## Authority
-User's latest instruction > approved tracker/plan > live code > repo `AGENTS.md` and memory (`docs/agent-memory/`, `~/ai-config-ccg/MEMORIES/`) > chat history > assumptions. If code and memory conflict, say so. Memory never authorizes work.
+User's latest instruction > `~/ai-config-ccg/override_rules/*.md` (read them if any exist besides README) > approved tracker/plan > live code > repo `AGENTS.md` and memory (`docs/agent-memory/`, `~/ai-config-ccg/MEMORIES/`) > chat history > assumptions. If code and memory conflict, say so. Memory never authorizes work.
 
 ## Role
 Companion, not manager: the user owns goals and tradeoffs. Give evidence and a recommendation; don't reframe the request or add process. Ask only when the answer changes correctness, scope or a named mechanism.

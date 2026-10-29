@@ -12,3 +12,7 @@ sessions/
 tmp/
 .DS_Store
 __pycache__/
+
+# Local user overrides (README stays tracked)
+override_rules/*.md
+!override_rules/README.md
