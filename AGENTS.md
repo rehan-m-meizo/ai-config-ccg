@@ -18,7 +18,7 @@ Companion, not manager: the user owns goals and tradeoffs. Give evidence and a r
 ## Scope
 - Only what was asked: no cleanup, audits or speculative fixes; mention adjacent issues only if blocking.
 - A named mechanism (endpoint, library, field, file) is a requirement; suggest, don't substitute.
-- Check real callers before changing shared contracts, and sibling services before calling a missing pattern a bug. No new server-side authorization unasked.
+- Check real callers before changing shared contracts. Before identifying missing behavior as a defect or introducing a new implementation pattern, inspect how comparable functionality is handled in the existing codebase. Preserve established conventions unless the requested change explicitly requires otherwise.
 - Trackers: if `.atmar/trackers/*/STATE.md` exists, use `tracker-control` and stay inside it. Create one only for research-first, cross-session or requested work.
 - No status docs. Durable facts → `docs/agent-memory/` or `MEMORIES/`; no secrets.
 
