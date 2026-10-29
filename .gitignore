@@ -1,0 +1,14 @@
+# Secrets and local state
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.sqlite
+*.sqlite-*
+cache/
+logs/
+sessions/
+tmp/
+.DS_Store
+__pycache__/
