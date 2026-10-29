@@ -3,7 +3,7 @@ set -euo pipefail
 
 hooks=$(cd "$(dirname "${BASH_SOURCE[0]}")/../hooks" && pwd -P)
 work=$(mktemp -d /tmp/ai-config-ccg-hooks.XXXXXX)
-trap 'gio trash -f "$work"' EXIT
+trap 'gio trash -f "$work" 2>/dev/null || rm -rf "$work"' EXIT
 
 guard() {
   jq -n --arg c "$1" '{tool_name:"Bash",tool_input:{command:$c}}' |
@@ -36,6 +36,12 @@ expect_guard ask 'rm -rf node_modules'
 expect_guard ask 'kubectl apply -f deploy.yaml'
 expect_guard ask 'helm upgrade api ./chart'
 expect_guard ask 'gh pr create --fill'
+expect_guard ask 'sudo git push'
+expect_guard ask 'env GIT_SSH_COMMAND=x git push origin main'
+expect_guard ask 'bash -c "git push"'
+expect_guard ask 'git  -C repo   push'
+expect_guard ask 'rm -fr dist'
+expect_guard allow 'git pushd-helper-unrelated'
 expect_guard deny 'git commit --no-verify -m x'
 expect_guard deny $'git commit -m "x\n\nCo-Authored-By: A <a@b>"'
 
@@ -117,4 +123,9 @@ expect_ag stop "$ag_user" "$ag_edit" "$ag_out" "$(ag_say 'Not verified: no runne
 printf '%s\n' "$ag_user" "$ag_edit" >"$work/a.jsonl"
 [[ -z "$(jq -n --arg p "$work/a.jsonl" '{transcriptPath:$p,executionNum:2,terminationReason:"NO_TOOL_CALL"}' | python3 -I "$hooks/proof-gate.py")" ]]
 [[ -z "$(jq -n --arg p "$work/a.jsonl" '{transcriptPath:$p,executionNum:1,terminationReason:"USER_CANCELED"}' | python3 -I "$hooks/proof-gate.py")" ]]
+out=$(jq -n '{transcript_path:"/nonexistent/t.jsonl",stop_hook_active:false}' | python3 -I "$hooks/proof-gate.py" 2>&1) ||
+  { echo "gate: crashed on missing transcript: $out" >&2; exit 1; }
+[[ -z "$out" ]]
+printf '%s\n' "$user_prompt" 'not json {' "$edit" "$result" "$(say 'Done.')" >"$work/t.jsonl"
+[[ "$(jq -n --arg p "$work/t.jsonl" '{transcript_path:$p,stop_hook_active:false}' | python3 -I "$hooks/proof-gate.py" | jq -r .decision)" == block ]]
 echo 'hooks: PASS'

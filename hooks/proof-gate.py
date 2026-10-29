@@ -1,6 +1,7 @@
 """Stop (Claude Code, Codex, Antigravity): if this turn edited files, require a check
 after the last edit and a reported result, or an explicit "not verified"."""
 import json
+import os
 import re
 import sys
 
@@ -101,7 +102,7 @@ def main():
     if antigravity and payload.get("terminationReason") != "NO_TOOL_CALL":
         return
     path = payload.get("transcript_path") or payload.get("transcriptPath")
-    if not path:
+    if not path or not os.path.isfile(path):
         return
     entries = []
     with open(path) as transcript:

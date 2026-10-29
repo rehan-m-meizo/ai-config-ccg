@@ -8,7 +8,12 @@ if [[ "$mode" != --sync && "$mode" != --check && "$mode" != --dry-run && "$mode"
 fi
 
 source_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
-agent_home=${AI_CONFIG_CCG_TEST_HOME:-${HOME:?}}
+required_root=$(realpath -m "${HOME:?}/ai-config-ccg")
+if [[ "$source_root" != "$required_root" ]]; then
+  echo "this repository must live at $required_root (hooks call scripts there); it is at $source_root" >&2
+  exit 1
+fi
+agent_home=${AI_CONFIG_CCG_TEST_HOME:-$HOME}
 agent_home=$(cd "$agent_home" && pwd -P)
 skill_manifests=("$source_root"/skills/*/SKILL.md)
 if [[ ! -f "${skill_manifests[0]}" ]]; then

@@ -34,8 +34,8 @@ behavior must work and pass its acceptance checks.
 
 ## Start from a clean setup
 
-1. Put this repository at `~/ai-config-ccg`. If you use another location,
-   update the paths in `AGENTS.md` before syncing.
+1. Put this repository at exactly `~/ai-config-ccg`. The hooks call scripts
+   there, so `install.sh` refuses to run from any other location.
 2. Read `AGENTS.md`; adjust project-specific assumptions for your
    work. Keep each project's durable facts in that project's own `AGENTS.md`.
 3. Inspect the existing rule and skill paths shown below. Use a fresh agent
@@ -107,12 +107,18 @@ packages, but this setup does not build, publish, or install a package.
 `install.sh` also links `~/.claude/settings.json` to `claude/settings.json`,
 which adds three hooks from `hooks/`:
 
+These are guardrails, not a sandbox: they match command text, so a script or
+program that performs the same action internally is not seen. Keep real limits
+in OS permissions, scoped credentials, and deployment authorization.
+
 - `guard-bash.py` denies `--no-verify` and `Co-Authored-By`, and forces an
   approval prompt for push, tag, destructive git, `rm -rf`, cluster changes,
   image pushes, and PR/release creation.
 - `prompt-reminder.sh` adds a one-line scope/proof reminder to each prompt.
-- `proof-gate.py` stops Claude from ending a turn that edited files without a
-  check run after the last edit and a reported result, or "not verified".
+- `proof-gate.py` is an evidence-reporting gate: it stops a turn that edited
+  files from ending until a command ran after the last edit and a result is
+  reported, or "not verified" is stated. It does not judge whether the command
+  was the right test or whether it passed; review that yourself.
 
 Run `scripts/test-hooks.sh` after changing them.
 

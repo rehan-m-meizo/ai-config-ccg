@@ -31,7 +31,7 @@ Backend: TDD, see it fail first, positive and negative cases. Frontend: focused 
 - Persisted data: dry-run, show diff, wait for "apply", per environment; name the environment you queried. Never commit credentials.
 
 ## Data
-Use the backend's exact literals; no case-insensitive masking. Quantities and balances show 2 decimals (not integer config inputs).
+Use the backend's exact literals; no case-insensitive masking. Domain display rules (decimals, currency) belong in each project's `AGENTS.md`.
 
 ## Threads
 Read only needed lines; cap output. Edit agent config in its own thread. If a reply is cut off, work loops, or context is unreliable: update tracker `STATE.md`, then ask the user for a new thread with a short handoff (goal, state, facts, next step, files).

@@ -3,7 +3,8 @@ set -euo pipefail
 
 source_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
 test_home=$(mktemp -d /tmp/ai-config-ccg-sync.XXXXXX)
-trap 'gio trash -f "$test_home"' EXIT
+copy=$(mktemp -d /tmp/ai-config-ccg-copy.XXXXXX)
+trap 'gio trash -f "$test_home" "$copy" 2>/dev/null || rm -rf "$test_home" "$copy"' EXIT
 export AI_CONFIG_CCG_TEST_HOME="$test_home"
 
 if "$source_root/scripts/sync-agents.sh" --check >/dev/null 2>&1; then
@@ -70,4 +71,10 @@ fi
 rmdir "$unmanaged"
 "$source_root/install.sh" >/dev/null
 "$source_root/scripts/sync-agents.sh" --check >/dev/null
+cp -r "$source_root/AGENTS.md" "$source_root/skills" "$source_root/scripts" "$source_root/claude" "$source_root/codex" "$source_root/gemini" "$copy/"
+if refused=$("$copy/scripts/sync-agents.sh" --check 2>&1); then
+  echo 'expected install from a relocated copy to be refused' >&2
+  exit 1
+fi
+grep -q 'must live at' <<<"$refused"
 echo 'sync behavior: PASS'
